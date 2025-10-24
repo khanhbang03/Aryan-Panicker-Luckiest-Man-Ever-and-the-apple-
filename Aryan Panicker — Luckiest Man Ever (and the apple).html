@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aryan Panicker — Luckiest Man Ever (and the apple)</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --accent:#ffd166;
+      --muted:#9aa6b2;
+      --glass: rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 20%, rgba(255,209,102,0.05), transparent),
+                  radial-gradient(800px 400px at 90% 80%, rgba(130,177,255,0.03), transparent),
+                  var(--bg);
+      color:#e6eef6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .stage{
+      width:100%;
+      max-width:980px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius:18px;
+      padding:28px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    header{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+    .logo{
+      width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#ff6b6b);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#04203b;
+      box-shadow: 0 6px 18px rgba(255,209,102,0.12);
+    }
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:14px}
+
+    .scene{
+      display:flex;
+      gap:24px;
+      align-items:flex-start;
+    }
+
+    /* Character card */
+    .card{
+      width:320px;
+      background:var(--glass);
+      border-radius:14px;
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .avatar{
+      width:120px;height:120px;border-radius:999px;background:linear-gradient(180deg,#ffefc0,#ffd166);display:flex;align-items:center;justify-content:center;font-size:48px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      margin-bottom:12px;
+    }
+    .title{font-weight:700;margin-bottom:6px}
+    .subtitle{font-size:13px;color:var(--muted);margin-bottom:12px}
+    .controls{display:flex;gap:10px}
+    button{
+      background:linear-gradient(180deg,#ffd166,#ffb400);
+      border:0;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer;
+      box-shadow: 0 6px 18px rgba(255,185,0,0.12);
+    }
+    button.secondary{
+      background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);
+      box-shadow:none;font-weight:600;
+    }
+
+    /* Stage area where apple drops */
+    .stage-area{
+      flex:1;
+      min-height:320px;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:visible;
+    }
+
+    .ground{
+      position:absolute;left:0;right:0;bottom:0;height:90px;
+      background: linear-gradient(180deg,#07111a,#041018);
+      border-top:1px solid rgba(255,255,255,0.02);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--muted);font-size:14px;
+    }
+
+    .jarvis{
+      position:relative;width:230px;height:260px;
+      display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+      pointer-events:none;
+    }
+
+    .person{
+      margin-top:36px;
+      width:140px;height:160px;background:linear-gradient(180deg,#1b2330,#0e1a26);
+      border-radius:18px;
+      display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+      padding-bottom:14px;position:relative;
+      box-shadow: 0 12px 36px rgba(2,6,23,0.6);
+    }
+    .face{
+      width:88px;height:88px;border-radius:999px;background:linear-gradient(180deg,#ffefc0,#ffd166);position:absolute;top:-44px;display:flex;align-items:center;justify-content:center;font-size:36px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    }
+    .smile{font-size:20px;margin-top:6px;color:#04203b;font-weight:700}
+
+    /* apple */
+    .apple{
+      width:48px;height:48px;border-radius:999px;background:radial-gradient(circle at 35% 30%, #fff0a0, #ff5b5b 40%, #c92e2e 100%);display:flex;align-items:center;justify-content:center;font-size:24px;color:#2b0b0b;position:absolute;
+      left:50%;transform:translateX(-50%);top:12px;z-index:5;
+      transition: transform 600ms cubic-bezier(.22,.9,.3,1), top 600ms;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+      cursor:pointer;
+    }
+
+    .apple.falling{
+      animation:fall 700ms cubic-bezier(.0,.8,.25,1) forwards;
+    }
+    @keyframes fall{
+      0%{transform:translateX(-50%) translateY(0) rotate(0);}
+      60%{transform:translateX(-50%) translateY(220px) rotate(20deg);}
+      100%{transform:translateX(-50%) translateY(230px) rotate(0);}
+    }
+
+    /* impact ripple */
+    .ripple{
+      position:absolute;left:50%;bottom:86px;width:8px;height:8px;background:rgba(255,255,255,0.06);border-radius:999px;transform:translateX(-50%);opacity:0;
+    }
+    .ripple.show{
+      animation:rippleAnim 700ms ease-out forwards;
+    }
+    @keyframes rippleAnim{
+      0%{width:8px;height:8px;opacity:0.8}
+      100%{width:220px;height:220px;opacity:0}
+    }
+
+    /* confetti pieces */
+    .confetti{
+      position:absolute;left:0;top:0;pointer-events:none;width:100%;height:100%;overflow:visible;
+    }
+    .piece{
+      position:absolute;width:10px;height:16px;opacity:0.95;border-radius:2px;transform-origin:center;
+      will-change:transform,opacity;
+    }
+
+    /* laughter text */
+    .laughter{
+      position:absolute;right:16px;top:16px;padding:8px 12px;background:rgba(0,0,0,0.25);border-radius:999px;font-weight:700;color:var(--accent);
+      border:1px solid rgba(255,209,102,0.08);
+      display:flex;align-items:center;gap:8px;
+    }
+
+    /* responsive */
+    @media (max-width:880px){
+      .scene{flex-direction:column;align-items:center}
+      .card{width:100%}
+      .stage-area{min-height:260px}
+      .jarvis{transform:scale(0.95)}
+    }
+
+  </style>
+</head>
+<body>
+  <div class="stage" role="main" aria-label="Wishing Aryan Panicker luckiest man ever">
+    <header>
+      <div class="logo" aria-hidden="true">AP</div>
+      <div>
+        <h1>Wishing <strong>Aryan Panicker</strong> the luckiest man ever 🍀</h1>
+        <p class="lead">A tiny scene: he drops an apple — and oh, everyone laughs. Click "Drop apple" to play the moment.</p>
+      </div>
+    </header>
+
+    <div class="scene">
+      <div class="card" aria-hidden="false">
+        <div class="avatar">🙂</div>
+        <div class="title">Aryan Panicker</div>
+        <div class="subtitle">Luck-level: off the charts 🌟</div>
+
+        <div style="width:100%;text-align:left;margin-top:8px;color:var(--muted);font-size:13px">
+          <strong>How to:</strong>
+          <ul style="margin:8px 0 12px 18px;padding:0;color:var(--muted)">
+            <li>Click nút <em>Drop apple</em> hoặc click quả táo.</li>
+            <li>Nghe tiếng cười (Web Speech) và thấy confetti.</li>
+            <li>Nhấn <em>Reset</em> để xem lại.</li>
+          </ul>
+        </div>
+
+        <div class="controls" role="group" aria-label="controls">
+          <button id="dropBtn">Drop apple</button>
+          <button id="resetBtn" class="secondary">Reset</button>
+        </div>
+      </div>
+
+      <div class="stage-area" aria-hidden="false">
+        <div class="jarvis" aria-hidden="true">
+          <div class="apple" id="apple" role="img" aria-label="A red apple" title="Click to drop">🍎</div>
+
+          <div class="person" aria-hidden="true">
+            <div class="face">🙂</div>
+            <div style="width:72px;height:12px;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:10px;"></div>
+            <div class="smile">Luckiest man ever</div>
+          </div>
+
+          <div class="ripple" id="ripple" aria-hidden="true"></div>
+        </div>
+
+        <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+        <div class="laughter" id="laughter" aria-live="polite" style="display:none;">
+          😂 Everyone laughed!
+        </div>
+
+        <div class="ground" aria-hidden="true">Scene: the apple hits the ground — cue the laughters and confetti.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const apple = document.getElementById('apple');
+    const dropBtn = document.getElementById('dropBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const ripple = document.getElementById('ripple');
+    const confettiRoot = document.getElementById('confetti');
+    const laughterBadge = document.getElementById('laughter');
+
+    let isFalling = false;
+    let confettiPieces = [];
+
+    function speak(text){
+      if(!('speechSynthesis' in window)) return;
+      // Use a short laugh line
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      utter.volume = 0.9;
+      utter.rate = 1.05;
+      speechSynthesis.cancel(); // stop previous
+      speechSynthesis.speak(utter);
+    }
+
+    function createConfetti() {
+      // remove any previous
+      confettiRoot.innerHTML = '';
+      confettiPieces = [];
+      const count = 36;
+      const w = confettiRoot.clientWidth;
+      const h = confettiRoot.clientHeight;
+      for (let i=0;i<count;i++){
+        const el = document.createElement('div');
+        el.classList.add('piece');
+        // Random color palette (keeps in theme)
+        const palette = ['#ffd166','#ff6b6b','#6bf0b1','#7cc6ff','#e0a3ff'];
+        const color = palette[Math.floor(Math.random()*palette.length)];
+        el.style.background = color;
+        // start position: around top center above apple
+        const startX = w*0.5 + (Math.random()-0.5)*160;
+        const startY = 20 + Math.random()*40;
+        el.style.left = startX + 'px';
+        el.style.top = startY + 'px';
+        el.style.opacity = 1;
+        // random rotation
+        el.style.transform = `rotate(${Math.random()*360}deg) translateY(0px)`;
+        confettiRoot.appendChild(el);
+        confettiPieces.push({el,dx:(Math.random()-0.5)*6,dy: (2+Math.random()*6),rot: Math.random()*720,spin: (Math.random()-0.5)*8,life: 120 + Math.random()*80});
+      }
+    }
+
+    function animateConfetti(){
+      // run for ~200 frames
+      confettiPieces.forEach(p=>{
+        p.life -= 1;
+        const rect = p.el.getBoundingClientRect();
+        const curTop = parseFloat(p.el.style.top || 0);
+        const curLeft = parseFloat(p.el.style.left || 0);
+        p.el.style.top = (curTop + p.dy) + 'px';
+        p.el.style.left = (curLeft + p.dx) + 'px';
+        p.el.style.transform = `rotate(${p.rot += p.spin}deg)`;
+        p.el.style.opacity = Math.max(0, p.life / 220);
+      });
+      // remove after all dead
+      if(confettiPieces.length && confettiPieces.every(p=>p.life<=0)){
+        confettiRoot.innerHTML = '';
+        confettiPieces = [];
+      } else {
+        requestAnimationFrame(animateConfetti);
+      }
+    }
+
+    function doDrop(){
+      if(isFalling) return;
+      isFalling = true;
+      apple.classList.add('falling');
+      ripple.classList.remove('show');
+      // when animation ends -> impact
+      apple.addEventListener('animationend', onImpact, {once:true});
+      // small visual for laughter
+      laughterBadge.style.display = 'none';
+      dropBtn.disabled = true;
+    }
+
+    function onImpact(){
+      // show ripple
+      ripple.classList.add('show');
+      // small nudge to apple (simulate bounce)
+      apple.style.transform = 'translateX(-50%) translateY(232px) rotate(6deg)';
+      setTimeout(()=>{ apple.style.transform = 'translateX(-50%) translateY(230px) rotate(0deg)'; }, 160);
+
+      // confetti & laugh
+      createConfetti();
+      requestAnimationFrame(animateConfetti);
+      // show laughter badge
+      laughterBadge.style.display = 'flex';
+
+      // Web speech: short laugh chorus
+      speak("Ha ha ha! Oh no, the apple dropped!");
+
+      // tiny text bubble visible for 3.8s
+      setTimeout(()=> {
+        laughterBadge.style.display = 'none';
+      }, 3800);
+
+      // allow reset
+      setTimeout(()=> {
+        dropBtn.disabled = true; // keep disabled; use Reset to replay
+      }, 400);
+
+      isFalling = false;
+    }
+
+    function resetScene(){
+      // remove classes, return apple to top
+      apple.classList.remove('falling');
+      apple.style.transform = 'translateX(-50%) translateY(0) rotate(0)';
+      ripple.classList.remove('show');
+      confettiRoot.innerHTML = '';
+      confettiPieces = [];
+      laughterBadge.style.display = 'none';
+      dropBtn.disabled = false;
+      // small friendly beep via speak
+      speak("Reset. Ready!");
+    }
+
+    // Event listeners
+    dropBtn.addEventListener('click', doDrop);
+    apple.addEventListener('click', doDrop);
+    resetBtn.addEventListener('click', resetScene);
+
+    // Accessibility: keyboard activation
+    apple.setAttribute('tabindex','0');
+    apple.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') doDrop(); });
+
+    // initial micro-animation hint
+    setTimeout(()=> {
+      apple.animate([
+        { transform: 'translateX(-50%) translateY(0) translateY(0)' },
+        { transform: 'translateX(-50%) translateY(-6px)' },
+        { transform: 'translateX(-50%) translateY(0)'}
+      ], {duration:1400,iterations:Infinity, easing:'ease-in-out'});
+    }, 600);
+
+    // Friendly: if speechSynthesis blocked, silently continue
+    // End script
+  </script>
+</body>
+</html>
